@@ -6,10 +6,9 @@ import Data from './data.json';
 
 const App = () => {
   const placeholders = [
-    'Placeholder 1',
-    'Placeholder 2',
-    'Placeholder 3',
-    'Placeholder 4',
+    'Search by title',
+    'Search by author',
+    'Search by date',
   ];
 
   return (
@@ -24,10 +23,11 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     paddingTop: 50,
-    marginBottom: 20,
+    paddingBottom: 20,
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    backgroundColor: '#57A0D3',
   },
 });

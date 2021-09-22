@@ -3,26 +3,27 @@ import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 const SearchBar = ({placeholders, data}) => {
-  var index = 0;
-  const [placeholder, setPlaceholder] = useState(placeholders[index]);
+  const [placeholder, setPlaceholder] = useState(placeholders[0]);
   const [filteredData, setFilteredData] = useState(data);
   const [queryText, setQueryText] = useState('');
-  var count = placeholders.length;
+  const [focusStyles, setFocusStyles] = useState({});
 
   useEffect(() => {
     const changePlaceholder = () => {
-      index = (index + 1) % count;
-      setPlaceholder(placeholders[index]);
+      let index = Math.floor(Math.random() * 12);
+      setPlaceholder(placeholders[index % placeholders.length]);
     };
-    // Interval of 5000ms to change the timer.
-    const changePlaceholderEvery2s = setInterval(changePlaceholder, 5000);
+    const changePlaceholderEvery2s = setInterval(changePlaceholder, 2000);
     return () => clearInterval(changePlaceholderEvery2s);
   }, []);
 
   const handleFilter = text => {
-    console.log(text);
     const newData = data.filter(value => {
-      return value.title.toLowerCase().includes(text.toLowerCase());
+      return (
+        value.title.toLowerCase().includes(text.toLowerCase()) ||
+        value.author.toLowerCase().includes(text.toLowerCase()) ||
+        value.year.toString().toLowerCase().includes(text.toLowerCase())
+      );
     });
     setFilteredData(newData);
     setQueryText(text);
@@ -33,11 +34,28 @@ const SearchBar = ({placeholders, data}) => {
     setFilteredData(data);
   };
 
+  const onFocus = () => {
+    const style = {
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 10,
+      },
+      shadowOpacity: 0.58,
+      shadowRadius: 16.0,
+
+      elevation: 24,
+    };
+    setFocusStyles(style);
+  };
+
   return (
     <>
-      <View style={styles.boxContainer}>
+      <View style={[focusStyles, styles.boxContainer]}>
         <TextInput
           value={queryText}
+          onFocus={onFocus}
+          onBlur={() => setFocusStyles({})}
           style={styles.inputBox}
           placeholder={placeholder}
           onChangeText={text => handleFilter(text)}
@@ -71,7 +89,9 @@ const SearchBar = ({placeholders, data}) => {
           renderItem={({item}) => {
             return (
               <View style={styles.resultItem}>
-                <Text>{item.title}</Text>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.author}>- By {item.author}</Text>
+                <Text style={styles.year}>Published on: {item.year}</Text>
               </View>
             );
           }}
@@ -84,41 +104,55 @@ const SearchBar = ({placeholders, data}) => {
 export default SearchBar;
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  author: {
+    fontSize: 12,
+  },
+  year: {
+    fontSize: 11,
+    marginLeft: 7,
+  },
   boxContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderWidth: 0.2,
-    borderRadius: 2,
+    borderRadius: 5,
     height: 50,
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderColor: '#555',
     width: '90%',
+    backgroundColor: '#fff',
   },
   inputBox: {
     height: 50,
-    fontSize: 18,
-    width: '90%',
+    fontSize: 16,
+    borderWidth: 0,
   },
+
   searchIcon: {
     color: 'grey',
-    width: '10%',
-    textAlign: 'center',
   },
   backIcon: {
     color: 'grey',
   },
   resultsContainer: {
-    marginTop: 10,
+    marginTop: 20,
     width: '90%',
   },
   resultItem: {
     paddingVertical: 15,
+    marginBottom: 5,
     width: '100%',
+    backgroundColor: '#fff',
     paddingHorizontal: 20,
     borderBottomWidth: 0.2,
     borderBottomColor: '#888',
+    borderRadius: 6,
   },
 });
