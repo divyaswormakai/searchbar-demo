@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
+import Placeholder from './Placeholder';
+
 const SearchBar = ({placeholders, data}) => {
-  const [placeholder, setPlaceholder] = useState(placeholders[0]);
   const [filteredData, setFilteredData] = useState(data);
   const [queryText, setQueryText] = useState('');
   const [focusStyles, setFocusStyles] = useState({});
+  const [placeholderVisible, setPlaceholderVisible] = useState(true);
 
-  useEffect(() => {
-    const changePlaceholder = () => {
-      let index = Math.floor(Math.random() * 12);
-      setPlaceholder(placeholders[index % placeholders.length]);
-    };
-    const changePlaceholderEvery2s = setInterval(changePlaceholder, 2000);
-    return () => clearInterval(changePlaceholderEvery2s);
-  }, []);
+  const inputRef = useRef(null);
 
   const handleFilter = text => {
+    if (text.length != 0) {
+      setPlaceholderVisible(false);
+    } else {
+      setPlaceholderVisible(true);
+    }
     const newData = data.filter(value => {
       return (
         value.title.toLowerCase().includes(text.toLowerCase()) ||
@@ -30,6 +30,7 @@ const SearchBar = ({placeholders, data}) => {
   };
 
   const clearInput = () => {
+    setPlaceholderVisible(true);
     setQueryText('');
     setFilteredData(data);
   };
@@ -49,15 +50,22 @@ const SearchBar = ({placeholders, data}) => {
     setFocusStyles(style);
   };
 
+  const focusInput = () => {
+    if (inputRef) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <>
       <View style={[focusStyles, styles.boxContainer]}>
+        {placeholderVisible && <Placeholder placeholders={placeholders} />}
         <TextInput
+          ref={inputRef}
           value={queryText}
           onFocus={onFocus}
           onBlur={() => setFocusStyles({})}
           style={styles.inputBox}
-          placeholder={placeholder}
           onChangeText={text => handleFilter(text)}
         />
         {queryText.length === 0 ? (
@@ -66,6 +74,7 @@ const SearchBar = ({placeholders, data}) => {
             name="search"
             size={24}
             color="black"
+            onPress={focusInput}
           />
         ) : (
           <Icon
@@ -77,7 +86,7 @@ const SearchBar = ({placeholders, data}) => {
           />
         )}
       </View>
-      {filteredData.length != 0 && (
+      {filteredData.length && (
         <FlatList
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
@@ -120,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderWidth: 0.2,
-    borderRadius: 5,
+    borderRadius: 25,
     height: 50,
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -133,11 +142,17 @@ const styles = StyleSheet.create({
     height: 50,
     fontSize: 16,
     borderWidth: 0,
+    width: '90%',
   },
 
   searchIcon: {
+    width: '10%',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    height: 50,
     color: 'grey',
   },
+
   backIcon: {
     color: 'grey',
   },

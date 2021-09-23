@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-
 import SearchBar from './components/SearchBar';
 import Data from './data.json';
 
