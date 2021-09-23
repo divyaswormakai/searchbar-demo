@@ -1,22 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  StyleSheet,
-  Text,
-  Animated,
-  UIManager,
-} from "react-native";
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, UIManager } from 'react-native';
 
-if (Platform.OS === "android") {
+if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 }
 
-const Placeholder = ({ placeholders }) => {
+const Placeholder = ({placeholders}) => {
   const [placeholder, setPlaceholder] = useState(placeholders[0]);
 
-  const Sleep = (ms) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  const Sleep = ms => {
+    return new Promise(resolve => setTimeout(resolve, ms));
   };
 
   // animation
@@ -33,9 +28,8 @@ const Placeholder = ({ placeholders }) => {
       Animated.timing(position, {
         toValue: 0,
         duration: 500,
-        useNativeDriver:true
+        useNativeDriver: true,
       }),
-
     ]).start();
   };
 
@@ -49,28 +43,29 @@ const Placeholder = ({ placeholders }) => {
       Animated.timing(position, {
         toValue: -1,
         duration: 500,
-        useNativeDriver:true
+        useNativeDriver: true,
       }),
-    ]).start(()=>{
-      position.setValue(1)
+    ]).start(() => {
+      position.setValue(1);
     });
-    
   };
 
   useEffect(() => {
     var index = 0;
     const changePlaceholder = () => {
-      let cancel=false;
+      let cancel = false;
       fadeOut();
-      
+
       var newIndex = (index + 1) % placeholders.length;
       index++;
-      Sleep(500).then(()=>{
-        if(cancel) return;
+      Sleep(500).then(() => {
+        if (cancel) return;
         setPlaceholder(placeholders[newIndex]);
         fadeIn();
       });
-      return ()=> {cancel=true}
+      return () => {
+        cancel = true;
+      };
     };
     const changePlaceholderEvery2s = setInterval(changePlaceholder, 4000);
     return () => clearInterval(changePlaceholderEvery2s);
@@ -84,17 +79,16 @@ const Placeholder = ({ placeholders }) => {
             transform: [
               {
                 translateY: position.interpolate({
-                  inputRange: [0,1],
-                  outputRange: [0,10]
+                  inputRange: [0, 1],
+                  outputRange: [0, 10],
                 }),
               },
             ],
-            position: "absolute",
+            position: 'absolute',
             left: 20,
             opacity,
           },
-        ]}
-      >
+        ]}>
         <Text style={styles.placeHolder}>{placeholder}</Text>
       </Animated.View>
     </>
@@ -106,7 +100,7 @@ export default Placeholder;
 const styles = StyleSheet.create({
   placeHolder: {
     fontSize: 16,
-    color: "#777",
-    paddingLeft:5
+    color: '#777',
+    paddingLeft: 5,
   },
 });

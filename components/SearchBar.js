@@ -13,7 +13,8 @@ const SearchBar = ({placeholders, data}) => {
   const inputRef = useRef(null);
 
   const handleFilter = text => {
-    if (text.length != 0) {
+    console.log(text);
+    if (text.length > 0) {
       setPlaceholderVisible(false);
     } else {
       setPlaceholderVisible(true);
@@ -86,7 +87,7 @@ const SearchBar = ({placeholders, data}) => {
           />
         )}
       </View>
-      {filteredData.length && (
+      {filteredData.length > 0 && (
         <FlatList
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
